@@ -36,37 +36,6 @@ on:
         default: 'wasm-web'
         required: false
         description: 'Bob build architectures (Swap back to js-web,wasm-web for maximum compatibility)'
-  workflow_dispatch: # Yep. This is required. If you remove it, it breaks workflow_dispatch. If you remove workflow_call, it breaks default builds. Zany...
-    inputs:
-      PROJECT_TITLE:
-        description: 'Project title (inside game.project - Bob uses game.project as part of the build output path)'
-        required: true
-        type: string
-      DEFOLD_VERSION:
-        description: "Version of Defold to use for builds"
-        required: false
-        type: string
-        default: '1.8.0'
-      BUILD_SERVER:
-        required: false
-        description: "Custom build server"
-        type: string
-        default: 'https://build.defold.com'
-      PLATFORM:
-        type: string
-        default: 'js-web'
-        required: false
-        description: 'Bob build platform'
-      ARCHIVE:
-        type: boolean
-        default: true
-        required: false
-        description: 'Archive output to GitHub'
-      ARCHITECTURES:
-        type: string
-        default: 'wasm-web'
-        required: false
-        description: 'Bob build architectures (Swap back to js-web,wasm-web for maximum compatibility)'
 
 jobs:
   build:
