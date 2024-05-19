@@ -27,7 +27,7 @@ on:
         required: false
         description: 'Bob build platform'
       ARCHIVE:
-        type: bool
+        type: boolean
         default: true
         required: false
         description: 'Archive output to GitHub'
@@ -58,7 +58,7 @@ on:
         required: false
         description: 'Bob build platform'
       ARCHIVE:
-        type: bool
+        type: boolean
         default: true
         required: false
         description: 'Archive output to GitHub'
