@@ -6,6 +6,37 @@ color: 'green'
 
 on:
   workflow_call:
+    inputs:
+      PROJECT_TITLE:
+        description: 'Project title (inside game.project - Bob uses game.project as part of the build output path)'
+        required: true
+        type: string
+      DEFOLD_VERSION:
+        description: "Version of Defold to use for builds"
+        required: false
+        type: string
+        default: '1.8.0'
+      BUILD_SERVER:
+        required: false
+        description: "Custom build server"
+        type: string
+        default: 'https://build.defold.com'
+      PLATFORM:
+        type: string
+        default: 'js-web'
+        required: false
+        description: 'Bob build platform'
+      ARCHIVE:
+        type: bool
+        default: true
+        required: false
+        description: 'Archive output to GitHub'
+      ARCHITECTURES:
+        type: string
+        default: 'wasm-web'
+        required: false
+        description: 'Bob build architectures (Swap back to js-web,wasm-web for maximum compatibility)'
+
   workflow_dispatch:
     inputs:
       branch:
@@ -17,43 +48,13 @@ on:
         required: false
         default: ""
 
-env:
-  DEFOLD_VERSION: '1.8.0'
-  BUILD_SERVER: https://build.defold.com
-  PROJECT_TITLE: ""         # Bob uses game.project as part of the build output path
-  PLATFORM: 'js-web'
-  ARCHITECTURES: 'wasm-web' # Swap back to js-web,wasm-web for maximum compatibility
-  ARCHIVE: true
-
 jobs:
-  environ:
-    name: Extract environment variables for use within a build (GitHub Actions has some interesting restrictions)
-    runs-on: ubuntu-latest
-    steps:
-      - name: 'Load all environments from repository defaults, maybe'
-        run: |
-          ## Iterate over the input variables
-          ## output them in a format so we can run and update the env variables 
-          ## making use of $GITHUB_ENV
-          echo "$ALLMYVARS" | jq -r 'keys[] as $k | "echo \"\($k)=\(.[$k] )\" >> $GITHUB_ENV"' > ./update_env.sh
-          chmod +x ./update_env.sh
-          ./update_env.sh
-        shell: bash
-        env:
-          ALLMYVARS: ${{ toJSON(vars) }}
-    outputs:
-      DEFOLD_VERSION: ${{ env.DEFOLD_VERSION }}
-      PLATFORM: ${{ env.PLATFORM }}
-      ARCHITECTURES: ${{ env.ARCHITECTURES }}
-      BUILD_SERVER: ${{ env.BUILD_SERVER }}
-      PROJECT_TITLE: ${{ env.PROJECT_TITLE }}
-      ARCHIVE: ${{ env.ARCHIVE }}
   build:
     name: Build 
     runs-on: ubuntu-latest
     # defaults: # You might have to do this yourself...
     #   run:
-    #     working-directory: ${{ env.GAME_DIRECTORY }}
+    #     working-directory: ${{ inputs.GAME_DIRECTORY }}
     steps:
       - uses: actions/setup-java@v2
         with:
@@ -62,7 +63,7 @@ jobs:
 
       - name: Download bob.jar # Being kind to Defold by using GitHub's bandwidth (Android+iOS builder uses an S3 bucket Defold seems to maintain)
         run: |
-          wget -q https://github.com/defold/defold/releases/download/${{needs.environ.outputs.DEFOLD_VERSION}}/bob.jar
+          wget -q https://github.com/defold/defold/releases/download/${{inputs.DEFOLD_VERSION}}/bob.jar
           java -jar bob.jar --version
 
       - name: Apply extra bob flags
@@ -75,24 +76,24 @@ jobs:
         run: java -jar bob.jar resolve
 
       - name: Build
-        run: java -jar bob.jar --platform=${{ needs.environ.outputs.PLATFORM }} --architectures=${{needs.environ.outputs.ARCHITECTURES}} build --archive --build-server=${{ needs.environ.outputs.BUILD_SERVER }}
+        run: java -jar bob.jar --platform=${{ inputs.PLATFORM }} --architectures=${{inputs.ARCHITECTURES}} build --archive --build-server=${{ inputs.BUILD_SERVER }}
 
       - name: Bundle
-        run: java -jar bob.jar --platform=${{ needs.environ.outputs.PLATFORM }} --architectures=${{needs.environ.outputs.ARCHITECTURES}} ${{ steps.bob-flags.outputs.flags }} bundle
+        run: java -jar bob.jar --platform=${{ inputs.PLATFORM }} --architectures=${{inputs.ARCHITECTURES}} ${{ steps.bob-flags.outputs.flags }} bundle
         
       - name: Show output
         run: |
           ls -l build
           ls -l build/default
-          ls -l build/default/${{needs.environ.outputs.PROJECT_TITLE}}
+          ls -l build/default/${{inputs.PROJECT_TITLE}}
 
       - name: Get short commit sha
         id: short-commit-sha
         run: echo "::set-output name=sha::$(git rev-parse --short ${{ github.sha }})"
 
       - uses: actions/upload-artifact@v4
-        if: '${{needs.environ.outputs.ARCHIVE}}'
+        if: '${{inputs.ARCHIVE}}'
         with:
           compression-level: 9
-          name: ${{ needs.environ.outputs.PLATFORM }}_commit_${{ steps.short-commit-sha.outputs.sha }}
-          path: build/default/${{needs.environ.outputs.PROJECT_TITLE}}/
+          name: ${{ inputs.PLATFORM }}_commit_${{ steps.short-commit-sha.outputs.sha }}
+          path: build/default/${{inputs.PROJECT_TITLE}}/
