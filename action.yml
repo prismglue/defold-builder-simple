@@ -29,6 +29,18 @@ jobs:
   environ:
     name: Extract environment variables for use within a build (GitHub Actions has some interesting restrictions)
     runs-on: ubuntu-latest
+    steps:
+      - name: 'Load all environments from repository defaults, maybe'
+        run: |
+          ## Iterate over the input variables
+          ## output them in a format so we can run and update the env variables 
+          ## making use of $GITHUB_ENV
+          echo "$ALLMYVARS" | jq -r 'keys[] as $k | "echo \"\($k)=\(.[$k] )\" >> $GITHUB_ENV"' > ./update_env.sh
+          chmod +x ./update_env.sh
+          ./update_env.sh
+        shell: bash
+        env:
+          ALLMYVARS: ${{ toJSON(vars) }}
     outputs:
       DEFOLD_VERSION: ${{ env.DEFOLD_VERSION }}
       PLATFORM: ${{ env.PLATFORM }}
