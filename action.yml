@@ -1,6 +1,8 @@
 name: Defold-builder-simple
 description: Create archives using Defold's Bob the Builder. PRs to extend/improve accepted.
 author: 'prismglue'
+icon: 'truck'
+color: 'green'
 
 on:
   workflow_call:
