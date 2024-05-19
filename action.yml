@@ -28,7 +28,7 @@ env:
   GITHUB_ARCHIVE: true
 
 jobs:
-  build_on_linux:
+  build:
     name: Build 
     runs-on: ubuntu-latest
     defaults:
