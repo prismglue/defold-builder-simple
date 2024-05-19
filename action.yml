@@ -34,7 +34,7 @@ inputs:
     required: false
     description: 'Bob build architectures (Swap back to js-web,wasm-web for maximum compatibility)'
 
-runas:
+runs:
   using: "composite"
   name: Build 
   runs-on: ubuntu-latest
