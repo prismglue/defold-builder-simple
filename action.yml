@@ -23,7 +23,7 @@ env:
   PROJECT_TITLE: ""         # Bob uses game.project as part of the build output path
   PLATFORM: 'js-web'
   ARCHITECTURES: 'wasm-web' # Swap back to js-web,wasm-web for maximum compatibility
-  GITHUB_ARCHIVE: true
+  ARCHIVE: true
 
 jobs:
   environ:
@@ -35,7 +35,7 @@ jobs:
       ARCHITECTURES: ${{ env.ARCHITECTURES }}
       BUILD_SERVER: ${{ env.BUILD_SERVER }}
       PROJECT_TITLE: ${{ env.PROJECT_TITLE }}
-      GITHUB_ARCHIVE: ${{ env.GITHUB_ARCHIVE }}
+      ARCHIVE: ${{ env.ARCHIVE }}
   build:
     name: Build 
     runs-on: ubuntu-latest
@@ -79,7 +79,7 @@ jobs:
         run: echo "::set-output name=sha::$(git rev-parse --short ${{ github.sha }})"
 
       - uses: actions/upload-artifact@v4
-        if: '${{needs.environ.outputs.GITHUB_ARCHIVE}}'
+        if: '${{needs.environ.outputs.ARCHIVE}}'
         with:
           compression-level: 9
           name: ${{ needs.environ.outputs.PLATFORM }}_commit_${{ steps.short-commit-sha.outputs.sha }}
