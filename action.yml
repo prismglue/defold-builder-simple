@@ -37,17 +37,6 @@ on:
         required: false
         description: 'Bob build architectures (Swap back to js-web,wasm-web for maximum compatibility)'
 
-  workflow_dispatch:
-    inputs:
-      branch:
-        description: ""
-        required: true
-        default: "main"
-      settings:
-        description: "bob settings file (e.g. 'prod.ini')"
-        required: false
-        default: ""
-
 jobs:
   build:
     name: Build 
