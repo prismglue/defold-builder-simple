@@ -7,31 +7,31 @@ color: 'green'
 on:
   workflow_call:
     inputs:
-      PROJECT_TITLE:
+      project_title:
         description: 'Project title (inside game.project - Bob uses game.project as part of the build output path)'
         required: true
         type: string
-      DEFOLD_VERSION:
+      defold_version:
         description: "Version of Defold to use for builds"
         required: false
         type: string
         default: '1.8.0'
-      BUILD_SERVER:
+      build_server:
         required: false
         description: "Custom build server"
         type: string
         default: 'https://build.defold.com'
-      PLATFORM:
+      platform:
         type: string
         default: 'js-web'
         required: false
         description: 'Bob build platform'
-      ARCHIVE:
+      archive:
         type: boolean
         default: true
         required: false
         description: 'Archive output to GitHub'
-      ARCHITECTURES:
+      architectures:
         type: string
         default: 'wasm-web'
         required: false
@@ -52,7 +52,7 @@ jobs:
 
       - name: Download bob.jar # Being kind to Defold by using GitHub's bandwidth (Android+iOS builder uses an S3 bucket Defold seems to maintain)
         run: |
-          wget -q https://github.com/defold/defold/releases/download/${{inputs.DEFOLD_VERSION}}/bob.jar
+          wget -q https://github.com/defold/defold/releases/download/${{inputs.defold_version}}/bob.jar
           java -jar bob.jar --version
 
       # - name: Apply extra bob flags
@@ -65,24 +65,24 @@ jobs:
         run: java -jar bob.jar resolve
 
       - name: Build
-        run: java -jar bob.jar --platform=${{ inputs.PLATFORM }} --architectures=${{inputs.ARCHITECTURES}} build --archive --build-server=${{ inputs.BUILD_SERVER }}
+        run: java -jar bob.jar --platform=${{ inputs.platform }} --architectures=${{inputs.architectures}} build --archive --build-server=${{ inputs.build_server }}
 
       - name: Bundle
-        run: java -jar bob.jar --platform=${{ inputs.PLATFORM }} --architectures=${{inputs.ARCHITECTURES}} ${{ steps.bob-flags.outputs.flags }} bundle
+        run: java -jar bob.jar --platform=${{ inputs.platform }} --architectures=${{inputs.architectures}} ${{ steps.bob-flags.outputs.flags }} bundle
         
       - name: Show output
         run: |
           ls -l build
           ls -l build/default
-          ls -l build/default/${{inputs.PROJECT_TITLE}}
+          ls -l build/default/${{inputs.project_title}}
 
       - name: Get short commit sha
         id: short-commit-sha
         run: echo "::set-output name=sha::$(git rev-parse --short ${{ github.sha }})"
 
       - uses: actions/upload-artifact@v4
-        if: '${{inputs.ARCHIVE}}'
+        if: '${{inputs.archive}}'
         with:
           compression-level: 9
-          name: ${{ inputs.PLATFORM }}_commit_${{ steps.short-commit-sha.outputs.sha }}
-          path: build/default/${{inputs.PROJECT_TITLE}}/
+          name: ${{ inputs.platform }}_commit_${{ steps.short-commit-sha.outputs.sha }}
+          path: build/default/${{inputs.project_title}}/
