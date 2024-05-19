@@ -21,7 +21,7 @@ env:
   DEFOLD_VERSION: '1.8.0'
   BUILD_SERVER: https://build.defold.com
   PROJECT_TITLE: ""         # Bob uses game.project as part of the build output path
-  GAME_DIRECTORY: .         # Specify a subdirectory if *.project isn't in the root directory
+  # GAME_DIRECTORY: .         # Specify a subdirectory if *.project isn't in the root directory
   PLATFORM: 'js-web'
   ARCHITECTURES: 'wasm-web' # Swap back to js-web,wasm-web for maximum compatibility
   JAVA_VERSION: '17'
@@ -31,9 +31,9 @@ jobs:
   build:
     name: Build 
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: ${{ env.GAME_DIRECTORY }}
+    # defaults: # You might have to do this yourself...
+    #   run:
+    #     working-directory: ${{ env.GAME_DIRECTORY }}
     steps:
 
       - uses: actions/checkout@v4
