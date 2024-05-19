@@ -21,10 +21,8 @@ env:
   DEFOLD_VERSION: '1.8.0'
   BUILD_SERVER: https://build.defold.com
   PROJECT_TITLE: ""         # Bob uses game.project as part of the build output path
-  # GAME_DIRECTORY: .         # Specify a subdirectory if *.project isn't in the root directory
   PLATFORM: 'js-web'
   ARCHITECTURES: 'wasm-web' # Swap back to js-web,wasm-web for maximum compatibility
-  JAVA_VERSION: '17'
   GITHUB_ARCHIVE: true
 
 jobs:
@@ -35,14 +33,9 @@ jobs:
     #   run:
     #     working-directory: ${{ env.GAME_DIRECTORY }}
     steps:
-
-      - uses: actions/checkout@v4
-        with:
-          ref: ${{ github.event.inputs.branch }}
-
       - uses: actions/setup-java@v2
         with:
-          java-version: '${{env.JAVA_VERSION}}'
+          java-version: '17'      # Feel free to bump this or argue for another distribution - it can't be extracted to env: for mutability reasons
           distribution: 'temurin'
 
       - name: Download bob.jar # Being kind to Defold by using GitHub's bandwidth (Android+iOS builder uses an S3 bucket Defold seems to maintain)
@@ -69,6 +62,7 @@ jobs:
         run: |
           ls -l build
           ls -l build/default
+          ls -l build/default/${{env.PROJECT_TITLE}}
 
       - name: Get short commit sha
         id: short-commit-sha
