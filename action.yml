@@ -59,7 +59,7 @@ runs:
 
     - name: Check what's going on
       shell: bash
-      run: find /home/runner/ -not -path '/home/runner/runners/'
+      run: find /home/runner/ -not -path '/home/runner/runners/*'
 
     - name: Resolve libraries
       shell: bash
