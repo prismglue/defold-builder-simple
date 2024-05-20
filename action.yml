@@ -49,7 +49,7 @@ runs:
 
     - uses: actions/setup-java@v2
       with:
-        java-version: '17'      # Feel free to bump this or argue for another distribution - it can't be extracted to env: for mutability reasons
+        java-version: '17'
         distribution: 'temurin'
 
     - name: Download bob.jar # Being kind to Defold by using GitHub's bandwidth (Android+iOS builder uses an S3 bucket Defold seems to maintain)
