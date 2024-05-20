@@ -5,15 +5,15 @@ branding:
   icon: 'truck'
   color: 'green'
 inputs:
-  project_title:
-    description: 'Project title (inside game.project - Bob uses game.project as part of the build output path)'
-    required: true
-    type: string
   defold_version:
     description: "Version of Defold to use for builds"
     required: false
     type: string
     default: '1.8.0'
+  project_title:
+    description: 'Project title (required for outputs.path and optional archive step)'
+    required: false
+    type: string
   build_server:
     required: false
     description: "Custom build server"
@@ -34,6 +34,10 @@ inputs:
     default: 'wasm-web'
     required: false
     description: 'Bob build architectures (Swap back to js-web,wasm-web for maximum compatibility)'
+outputs:
+  path:
+    description: "Default build output path"
+    value: ${{ steps.bundle.outputs.outpath }}
 
 runs:
   using: "composite"
@@ -70,7 +74,10 @@ runs:
 
     - name: Bundle
       shell: bash
-      run: java -jar bob.jar --platform=${{ inputs.platform }} --architectures=${{inputs.architectures}} ${{ steps.bob-flags.outputs.flags }} bundle
+      id: bundle
+      run: |
+        java -jar bob.jar --platform=${{ inputs.platform }} --architectures=${{inputs.architectures}} ${{ steps.bob-flags.outputs.flags }} bundle
+        echo "outpath=build/default/${{inputs.project_title}}/" >> $GITHUB_OUTPUT
       
     - name: Show output
       shell: bash
@@ -89,4 +96,4 @@ runs:
       with:
         compression-level: 9
         name: ${{ inputs.platform }}_commit_${{ steps.short-commit-sha.outputs.sha }}
-        path: build/default/${{inputs.project_title}}/
+        path: ${{steps.bundle.outputs.outpath}}
