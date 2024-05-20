@@ -36,8 +36,6 @@ inputs:
 
 runs:
   using: "composite"
-  name: Build 
-  runs-on: ubuntu-latest
   # defaults: # You might have to do this yourself...
   #   run:
   #     working-directory: ${{ inputs.GAME_DIRECTORY }}
@@ -48,11 +46,10 @@ runs:
         distribution: 'temurin'
 
     - name: Download bob.jar # Being kind to Defold by using GitHub's bandwidth (Android+iOS builder uses an S3 bucket Defold seems to maintain)
+      shell: bash
       run: |
-        wget -q https://github.com/defold/defold/releases/download/${{DEFOLD_VER}}/bob.jar
+        wget -q https://github.com/defold/defold/releases/download/${{ inputs.defold_version }}bob.jar
         java -jar bob.jar --version
-      env:
-        DEFOLD_VER: ${{ inputs.defold_version }}
 
     # - name: Apply extra bob flags
     #   id: bob-flags
@@ -61,21 +58,26 @@ runs:
     #     echo "::set-output name=flags::$FLAGS"
 
     - name: Resolve libraries
+      shell: bash
       run: java -jar bob.jar resolve
 
     - name: Build
+      shell: bash
       run: java -jar bob.jar --platform=${{ inputs.platform }} --architectures=${{inputs.architectures}} build --archive --build-server=${{ inputs.build_server }}
 
     - name: Bundle
+      shell: bash
       run: java -jar bob.jar --platform=${{ inputs.platform }} --architectures=${{inputs.architectures}} ${{ steps.bob-flags.outputs.flags }} bundle
       
     - name: Show output
+      shell: bash
       run: |
         ls -l build
         ls -l build/default
         ls -l build/default/${{inputs.project_title}}
 
     - name: Get short commit sha
+      shell: bash
       id: short-commit-sha
       run: echo "::set-output name=sha::$(git rev-parse --short ${{ github.sha }})"
 
