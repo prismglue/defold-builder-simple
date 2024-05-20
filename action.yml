@@ -48,7 +48,7 @@ runs:
     - name: Download bob.jar # Being kind to Defold by using GitHub's bandwidth (Android+iOS builder uses an S3 bucket Defold seems to maintain)
       shell: bash
       run: |
-        wget -q https://github.com/defold/defold/releases/download/${{ inputs.defold_version }}bob.jar
+        wget -q https://github.com/defold/defold/releases/download/${{ inputs.defold_version }}/bob.jar
         java -jar bob.jar --version
 
     # - name: Apply extra bob flags
