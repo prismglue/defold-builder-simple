@@ -59,7 +59,7 @@ runs:
 
     - name: Check what's going on
       shell: bash
-      run: ls -lah ..
+      run: find /home/runner/
 
     - name: Resolve libraries
       shell: bash
