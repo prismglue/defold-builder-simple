@@ -1,8 +1,9 @@
 name: Defold-builder-simple
 description: Create archives using Defold's Bob the Builder. PRs to extend/improve accepted.
 author: 'prismglue'
-icon: 'truck'
-color: 'green'
+branding:
+  icon: 'truck'
+  color: 'green'
 inputs:
   project_title:
     description: 'Project title (inside game.project - Bob uses game.project as part of the build output path)'
