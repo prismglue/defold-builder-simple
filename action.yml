@@ -40,6 +40,8 @@ runs:
   #   run:
   #     working-directory: ${{ inputs.GAME_DIRECTORY }}
   steps:
+    - uses: actions/checkout@v4
+
     - uses: actions/setup-java@v2
       with:
         java-version: '17'      # Feel free to bump this or argue for another distribution - it can't be extracted to env: for mutability reasons
@@ -56,10 +58,6 @@ runs:
     #   run: |
     #     FLAGS+=$([[ '${{ inputs.settings }}' ]] && echo ' --settings ${{ inputs.settings }}' || echo)
     #     echo "::set-output name=flags::$FLAGS"
-
-    - name: Check what's going on
-      shell: bash
-      run: find /home/runner/work/
 
     - name: Resolve libraries
       shell: bash
