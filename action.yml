@@ -57,6 +57,10 @@ runs:
     #     FLAGS+=$([[ '${{ inputs.settings }}' ]] && echo ' --settings ${{ inputs.settings }}' || echo)
     #     echo "::set-output name=flags::$FLAGS"
 
+    - name: Check what's going on
+      shell: bash
+      run: ls -lah
+
     - name: Resolve libraries
       shell: bash
       run: java -jar bob.jar resolve
