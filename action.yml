@@ -81,7 +81,7 @@ runs:
     - name: Get short commit sha
       shell: bash
       id: short-commit-sha
-      run: echo "::set-output name=sha::$(git rev-parse --short ${{ github.sha }})"
+      run: echo "sha=$(git rev-parse --short ${{ github.sha }}) >> $GITHUB_OUTPUT"
 
     - uses: actions/upload-artifact@v4
       if: '${{inputs.archive}}'
